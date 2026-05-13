@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avoco - Coffee & Tea Takeaway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; margin: 0; }
+        .font-heading { font-family: 'Playfair Display', serif; }
+        
+        /* BẢNG MÀU CHUẨN GỐC */
+        .bg-coffee-dark { background-color: #2c1e1a; }
+        .bg-coffee-warm { background-color: #e6c19a; }
+        .bg-nav-light { background-color: #fcf9f5; }
+        .text-gold { color: #d4a373; }
+        .bg-gold { background-color: #d4a373; }
+        
+        /* GRADIENT NÂU ĐẬM NGUYÊN BẢN CỦA HERO SECTION */
+        .hero-gradient { background: linear-gradient(180deg, #3d2b26 0%, #1a1210 100%); }
+        
+        /* Chuyển trang SPA */
+        .page-section { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
+        .page-section.active { display: block; opacity: 1; }
+        
+        /* Modal & Mobile Menu */
+        #cart-modal { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        #cart-modal.open { transform: translateX(0); }
+        
+        #mobile-menu-overlay { transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; }
+        #mobile-menu-overlay.open { opacity: 1; visibility: visible; }
+        #mobile-menu-overlay.closed { opacity: 0; visibility: hidden; }
+    </style>
+</head>
+<body class="bg-nav-light text-gray-800 relative min-h-screen flex flex-col">
+
+    <nav class="sticky top-0 w-full z-40 transition-all duration-300 bg-nav-light shadow-md h-[70px] md:h-[80px] flex items-center border-b border-[#2c1e1a]/10">
+        <div class="w-full max-w-7xl mx-auto flex justify-between items-center px-4 md:px-12 h-full relative">
+            
+            <a href="#" onclick="switchPage('home')" class="flex items-center h-full w-[90px] md:w-[160px] relative z-50">
+                <img src="logo-Photoroom.png" alt="Avoco Logo" class="absolute top-1/2 -translate-y-1/2 left-0 h-[100px] md:h-[150px] w-auto object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300 origin-left">
+            </a>
+            
+            <ul class="hidden md:flex space-x-8 lg:space-x-12 text-sm font-semibold text-[#2c1e1a] ml-auto mr-8">
+                <li><button onclick="switchPage('home')" class="hover:text-[#d4a373] transition">Trang chủ Ưu đãi</button></li>
+                <li><button onclick="switchPage('menu')" class="hover:text-[#d4a373] transition">Thực đơn</button></li>
+                <li><button onclick="scrollToStory()" class="hover:text-[#d4a373] transition">Về chúng tôi</button></li>
+                <li><button onclick="scrollToContact()" class="hover:text-[#d4a373] transition">Liên hệ</button></li>
+            </ul>
+
+            <div class="flex items-center space-x-4 md:space-x-8">
+                <a href="tel:0833847779" class="hidden sm:flex items-center space-x-2 text-[#2c1e1a] hover:text-[#d4a373] transition">
+                    <div class="bg-[#d4a373]/20 p-2.5 rounded-full flex items-center justify-center">
+                        <i class="fas fa-phone-alt text-[#d4a373]"></i>
+                    </div>
+                    <span class="font-bold text-sm tracking-wide">0833.847.779</span>
+                </a>
+                <div class="h-8 w-px bg-gray-300 hidden sm:block"></div>
+                <button onclick="toggleCart()" class="relative text-[#2c1e1a] hover:text-[#d4a373] transition text-2xl">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow-sm" style="display:none;">0</span>
+                </button>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-[#2c1e1a] hover:text-[#d4a373] transition text-2xl ml-2">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-coffee-dark z-[70] flex flex-col items-center justify-center closed">
+        <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-white text-3xl hover:text-gold transition"><i class="fas fa-times"></i></button>
+        <div class="flex flex-col space-y-8 text-center text-xl font-heading font-bold text-white tracking-wider">
+            <button onclick="switchPage('home'); toggleMobileMenu()" class="hover:text-gold transition">Trang chủ Ưu đãi</button>
+            <button onclick="switchPage('menu'); toggleMobileMenu()" class="hover:text-gold transition">Thực đơn Take-away</button>
+            <button onclick="scrollToStory(); toggleMobileMenu()" class="hover:text-gold transition">Về chúng tôi</button>
+            <button onclick="scrollToContact(); toggleMobileMenu()" class="hover:text-gold transition">Liên hệ & Địa chỉ</button>
+        </div>
+        <div class="mt-16 bg-gold/20 px-8 py-3 rounded-full text-gold flex items-center space-x-3 text-lg font-bold">
+            <i class="fas fa-phone-alt"></i><a href="tel:0833847779">0833.847.779</a>
+        </div>
+    </div>
+
+    <div id="cart-modal" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-white shadow-2xl z-[60] flex flex-col">
+        <div class="p-6 bg-coffee-dark text-white flex justify-between items-center">
+            <h2 class="font-heading text-2xl font-bold">Giỏ hàng</h2>
+            <button onclick="toggleCart()" class="text-xl hover:text-[#d4a373]"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50"><p class="text-center text-gray-500 mt-10">Giỏ hàng đang trống.</p></div>
+        <div class="p-6 border-t bg-white">
+            <div class="flex justify-between mb-4 text-lg font-bold"><span class="text-[#2c1e1a]">Tổng cộng:</span><span id="cart-total" class="text-gold">0đ</span></div>
+            <button onclick="checkout()" class="w-full bg-gold text-white py-4 rounded-xl font-bold text-lg hover:bg-[#2c1e1a] transition shadow-lg">Tiến hành Thanh toán</button>
+        </div>
+    </div>
+    <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/50 z-40 hidden"></div>
+
+    <main class="flex-1">
+        
+        <div id="page-home" class="page-section active">
+            
+            <header class="hero-gradient pt-28 pb-24 px-4 md:px-12 relative overflow-hidden rounded-b-[40px] md:rounded-b-[60px] text-white">
+                <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center relative z-10">
+                    <div class="md:w-1/2 space-y-6 md:space-y-8 text-center md:text-left">
+                        <div class="inline-block px-4 py-1 rounded-full border border-[#fdf6e3]/30 bg-[#fdf6e3]/10 text-nav-light text-xs tracking-widest uppercase font-bold">
+                            Nhanh chóng & Tiện lợi
+                        </div>
+                        <h1 class="text-5xl md:text-7xl font-heading font-bold leading-tight text-[#fdf6e3]">
+                            Cà phê ngon, <br><span class="text-gold italic">Mang đi ngay.</span>
+                        </h1>
+                        <p class="text-gray-300 max-w-md text-base md:text-lg font-light leading-relaxed mx-auto md:mx-0">
+                            Thưởng thức đặc sản Cà Phê Bơ và các thức uống tươi mát từ Avoco ở bất cứ đâu. Đặt trước, lấy ngay!
+                        </p>
+                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start pt-4">
+                            <button onclick="switchPage('menu')" class="bg-[#fdf6e3] text-[#2c1e1a] px-8 py-4 rounded-full font-bold hover:bg-gold hover:text-white transition shadow-xl text-center">
+                                <i class="fas fa-motorcycle mr-2"></i> Đặt Take-away ngay
+                            </button>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 mt-12 md:mt-0 flex justify-center w-full px-4 relative">
+                        <img src="https://images.unsplash.com/photo-1559525839-b184a4d698c7?q=80&w=600" alt="Avoco Takeaway" class="relative z-10 rounded-[30px] md:rounded-[40px] shadow-2xl md:rotate-2 hover:rotate-0 transition duration-500 w-full max-w-sm object-cover border-4 border-white/10">
+                    </div>
+                </div>
+            </header>
+
+            <section class="py-16 md:py-24 px-4 md:px-6 max-w-7xl mx-auto bg-nav-light">
+                <div class="text-center mb-12 md:mb-16">
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold mb-4 text-[#2c1e1a]">Chương Trình Ưu Đãi</h2>
+                    <div class="w-20 h-1 bg-gold mx-auto mb-4"></div>
+                </div>
+                
+                <div id="dynamic-promo-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+                    <p class="text-center col-span-full text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i> Đang tải thông tin ưu đãi...</p>
+                </div>
+            </section>
+
+            <section id="about-us-section" class="py-16 md:py-24 bg-coffee-dark text-white rounded-[40px] md:rounded-[60px] mx-4 md:mx-12 mb-16 md:mb-20 px-6 md:px-16 flex flex-col md:flex-row items-center gap-10 md:gap-16 shadow-2xl relative overflow-hidden">
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-gold rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+                
+                <div class="md:w-1/2 relative z-10 text-center md:text-left">
+                    <h2 class="text-3xl md:text-4xl font-heading font-bold mb-4 md:mb-6 text-gold">Câu chuyện của Avoco</h2>
+                    <div class="w-16 h-1 bg-gold mx-auto md:mx-0 mb-6"></div>
+                    <p class="text-gray-300 leading-relaxed mb-6 text-sm md:text-base">
+                        Lấy cảm hứng từ chiếc nón lá dung dị của người Việt, Avoco mang trong mình khát khao nâng tầm những nguyên liệu bản địa. Chúng tôi tin rằng, một ly cà phê mang đi không chỉ cần nhanh chóng, mà còn phải giữ trọn vẹn chất lượng và hương vị tinh túy nhất.
+                    </p>
+                    <p class="text-gray-300 leading-relaxed text-sm md:text-base">
+                        Từ những trái bơ sáp tươi ngon nhất hòa quyện cùng hạt cà phê đậm đà, dù bạn đang vội vã với công việc hay dạo bước trên phố, Avoco luôn sẵn sàng đồng hành cùng bạn bằng sự tận tâm trong từng ly nước.
+                    </p>
+                </div>
+                <div class="md:w-1/2 w-full relative z-10">
+                    <img src="https://images.unsplash.com/photo-1495474472201-42844912105e?q=80&w=800" alt="Avoco Story" class="rounded-[30px] md:rounded-[40px] shadow-2xl w-full object-cover h-[250px] md:h-[350px] border-2 border-gold/30">
+                </div>
+            </section>
+        </div>
+
+        <div id="page-menu" class="page-section py-16 md:py-20 px-4 md:px-6 max-w-7xl mx-auto bg-nav-light">
+            <div class="text-center mb-10 md:mb-12">
+                <h2 class="text-4xl md:text-5xl font-heading font-bold mb-4 text-[#2c1e1a]">Thực Đơn Avoco</h2>
+                <div class="w-20 h-1 bg-gold mx-auto mb-4"></div>
+                <p class="text-[#2c1e1a] italic text-base md:text-lg">Chọn món ngon, đặt giao liền</p>
+            </div>
+
+            <div id="loading-spinner" class="text-center py-20">
+                <i class="fas fa-circle-notch fa-spin text-4xl text-gold mb-4"></i>
+                <p class="text-[#2c1e1a] font-bold">Đang tải Menu mới nhất...</p>
+            </div>
+
+            <div id="category-filters" class="flex justify-start md:justify-center space-x-3 mb-10 overflow-x-auto pb-4 hidden scrollbar-hide px-2">
+                <button class="px-5 py-2 rounded-full bg-coffee-dark text-white font-bold whitespace-nowrap filter-btn active text-sm md:text-base" data-filter="all">Tất cả</button>
+            </div>
+            
+            <div id="dynamic-menu-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 hidden">
+                </div>
+        </div>
+    </main>
+
+    <footer id="contact" class="bg-coffee-dark pt-12 md:pt-16 pb-8 px-6 rounded-t-[40px] md:rounded-t-[60px] text-white mt-auto">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 mb-10 md:mb-12 text-center md:text-left">
+            <div>
+                <div class="bg-white/90 inline-block p-3 md:p-4 rounded-3xl mb-4">
+                    <img src="logo-Photoroom.png" alt="Avoco Logo" class="h-12 md:h-16 w-auto object-contain">
+                </div>
+                <p class="text-sm text-gray-400 mt-2 max-w-xs mx-auto md:mx-0 font-medium leading-relaxed">
+                    Chuyên phục vụ Cà phê và Thức uống mang đi (Take-away) với chất lượng hảo hạng.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gold uppercase tracking-widest text-sm mb-4">Ghé thăm & Liên hệ</h4>
+                <p class="text-sm text-gray-300 leading-loose">
+                    <i class="fas fa-map-marker-alt w-5 text-gold"></i> 20 Trần Bạch Đằng, Đà Nẵng<br>
+                    <i class="fas fa-phone-alt w-5 text-gold"></i> <a href="tel:0833847779" class="hover:text-white transition">0833.847.779</a><br>
+                    <i class="fas fa-envelope w-5 text-gold"></i> order@avoco.vn
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold text-gold uppercase tracking-widest text-sm mb-4">Thời gian mở cửa</h4>
+                <p class="text-sm text-gray-300 leading-loose">
+                    Thứ 2 - Chủ Nhật: 6:30 Sáng - 10:30 Tối<br>
+                    <em class="text-gold font-medium">Sẵn sàng phục vụ Take-away mọi lúc!</em>
+                </p>
+            </div>
+        </div>
+        <div class="text-center text-xs text-gray-500 uppercase tracking-widest border-t border-white/10 pt-6 md:pt-8">
+            <p>© 2026 AVOCO Coffee Takeaway. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        function toggleMobileMenu() {
+            if (mobileMenuOverlay.classList.contains('closed')) {
+                mobileMenuOverlay.classList.remove('closed');
+                mobileMenuOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden'; 
+            } else {
+                mobileMenuOverlay.classList.remove('open');
+                mobileMenuOverlay.classList.add('closed');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        let isDataLoaded = false;
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function scrollToStory() {
+            switchPage('home');
+            setTimeout(() => {
+                const yOffset = -80; 
+                const element = document.getElementById('about-us-section');
+                const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({top: y, behavior: 'smooth'});
+            }, 100);
+        }
+
+        function scrollToContact() {
+            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // ===============================================
+        // DÁN ĐƯỜNG LINK WEB APP (.../exec) CỦA BẠN VÀO ĐÂY
+        // ===============================================
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfyc.../exec"; 
+
+        let menuData = [];
+        let promoData = [];
+
+        async function fetchDataFromGoogle() {
+            try {
+                if(WEB_APP_URL.includes("AKfyc...")) {
+                    console.log("Đang dùng dữ liệu mẫu. Hãy dán link Web App của bạn vào WEB_APP_URL.");
+                    // Mẫu Menu
+                    menuData = [
+                        { name: "Cà Phê Bơ", category: "Signature", price: 40000, desc: "Sự kết hợp hoàn hảo giữa bơ béo ngậy và cà phê.", image: "https://images.unsplash.com/photo-1541167760496-162955ed8a9f?w=300" },
+                        { name: "Cà Phê Muối", category: "Cà phê", price: 30000, desc: "Vị mặn nhẹ khơi dậy hương thơm nồng nàn.", image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300" },
+                        { name: "Sinh Tố Bơ", category: "Sinh tố", price: 35000, desc: "Mát lạnh, giàu dinh dưỡng từ bơ tươi.", image: "https://images.unsplash.com/photo-1623065640513-39495ce81831?w=300" }
+                    ];
+                    // Mẫu Khuyến mãi
+                    promoData = [
+                        { title: "Combo Đánh Thức", desc: "Mua 1 Cà Phê Muối tặng 1 Bánh sừng bò nóng hổi.", time: "Từ 6:30 - 9:00 sáng", label: "HOT", image: "https://images.unsplash.com/photo-1589396575653-c09c794a6c7a?w=400" },
+                        { title: "Ngày hội Sinh Tố Bơ", desc: "Đồng giá chỉ 29K cho toàn bộ đồ uống nhóm Sinh Tố.", time: "Thứ 4 hàng tuần", label: "NEW", image: "https://images.unsplash.com/photo-1623065640513-39495ce81831?w=400" }
+                    ];
+                } else {
+                    const response = await fetch(WEB_APP_URL);
+                    const data = await response.json();
+                    
+                    if(data.menu) {
+                        menuData = data.menu.slice(1).map(row => ({
+                            name: row[0], category: row[1], price: row[2] || 0, desc: row[3], image: row[4] || 'https://via.placeholder.com/300?text=Avoco'
+                        }));
+                    }
+                    if(data.khuyenMai) {
+                        promoData = data.khuyenMai.slice(1).map(row => ({
+                            title: row[0], desc: row[1], time: row[2], label: row[3], image: row[4] || 'https://via.placeholder.com/400?text=Banner'
+                        }));
+                    }
+                }
+                
+                isDataLoaded = true;
+                document.getElementById('loading-spinner').classList.add('hidden');
+                document.getElementById('category-filters').classList.remove('hidden');
+                document.getElementById('dynamic-menu-container').classList.remove('hidden');
+                
+                buildFilters();
+                renderMenu(menuData);
+                renderPromo(promoData);
+
+            } catch (error) {
+                console.error("Lỗi:", error);
+                document.getElementById('loading-spinner').innerHTML = `<p class="text-red-500 font-bold">Lỗi tải dữ liệu. Vui lòng kiểm tra lại link Web App!</p>`;
+            }
+        }
+
+        // --- RENDER TIN TỨC / ƯU ĐÃI (THẺ NGANG) ---
+        function renderPromo(dataArray) {
+            const container = document.getElementById('dynamic-promo-container');
+            container.innerHTML = '';
+            
+            if(dataArray.length === 0) {
+                container.innerHTML = '<p class="text-center col-span-full text-gray-500">Chưa có chương trình ưu đãi nào.</p>';
+                return;
+            }
+
+            dataArray.forEach((item, index) => {
+                const isDark = index % 2 !== 0; 
+                
+                let labelHtml = item.label ? `<div class="absolute top-4 left-4 ${isDark ? 'bg-white text-[#2c1e1a]' : 'bg-red-500 text-white'} font-bold px-3 py-1 rounded-full text-xs z-10 shadow-lg">${item.label}</div>` : '';
+                let timeHtml = item.time ? `<p class="text-xs ${isDark ? 'text-white bg-white/20' : 'text-[#d4a373] font-bold bg-[#d4a373]/10'} p-2 rounded-lg inline-block text-center w-max mb-6">${item.time}</p>` : '';
+
+                const html = `
+                <div class="${isDark ? 'bg-coffee-dark text-white' : 'bg-white border-2 border-white'} rounded-[30px] md:rounded-[40px] overflow-hidden shadow-xl flex flex-col lg:flex-row transform hover:-translate-y-2 transition duration-300 relative">
+                    ${labelHtml}
+                    <img src="${item.image}" alt="${item.title}" class="w-full lg:w-1/2 h-48 lg:h-auto object-cover ${isDark ? 'order-1 lg:order-2' : ''}">
+                    <div class="p-6 md:p-8 flex flex-col justify-center w-full lg:w-1/2 ${isDark ? 'order-2 lg:order-1' : ''}">
+                        <h3 class="font-heading font-bold text-2xl ${isDark ? 'text-gold' : 'text-[#2c1e1a]'} mb-2">${item.title}</h3>
+                        <p class="text-sm ${isDark ? 'text-gray-300' : 'text-gray-500'} mb-4 line-clamp-3">${item.desc}</p>
+                        ${timeHtml}
+                        <button onclick="switchPage('menu')" class="${isDark ? 'bg-gold text-white hover:bg-white hover:text-[#2c1e1a]' : 'bg-[#2c1e1a] text-white hover:bg-gold'} px-6 py-2 rounded-full font-bold transition text-sm w-max">Xem Menu</button>
+                    </div>
+                </div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        // --- RENDER MENU & BỘ LỌC (CARD DỌC CHUẨN GỐC) ---
+        function buildFilters() {
+            const categories = [...new Set(menuData.map(item => item.category))];
+            const filterContainer = document.getElementById('category-filters');
+            
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = "px-5 py-2 rounded-full border-2 border-[#2c1e1a] text-[#2c1e1a] hover:bg-[#2c1e1a] hover:text-white transition font-bold whitespace-nowrap filter-btn text-sm md:text-base";
+                btn.innerText = cat;
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('bg-coffee-dark', 'text-white');
+                        b.classList.add('border-2', 'border-[#2c1e1a]', 'text-[#2c1e1a]');
+                    });
+                    e.target.classList.add('bg-coffee-dark', 'text-white');
+                    e.target.classList.remove('border-2', 'border-[#2c1e1a]', 'text-[#2c1e1a]');
+                    
+                    const filtered = menuData.filter(i => i.category === cat);
+                    renderMenu(filtered);
+                };
+                filterContainer.appendChild(btn);
+            });
+
+            filterContainer.children[0].onclick = (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('bg-coffee-dark', 'text-white');
+                    b.classList.add('border-2', 'border-[#2c1e1a]', 'text-[#2c1e1a]');
+                });
+                e.target.classList.add('bg-coffee-dark', 'text-white');
+                e.target.classList.remove('border-2', 'border-[#2c1e1a]', 'text-[#2c1e1a]');
+                renderMenu(menuData);
+            };
+        }
+
+        function renderMenu(dataArray) {
+            const container = document.getElementById('dynamic-menu-container');
+            container.innerHTML = '';
+            
+            dataArray.forEach((item, index) => {
+                const html = `
+                <div class="bg-white p-6 rounded-[30px] shadow-lg hover:-translate-y-2 transition duration-300 flex flex-col h-full border border-gray-100">
+                    <div class="flex-1">
+                        <div class="bg-coffee-dark rounded-2xl h-48 mb-4 flex items-center justify-center overflow-hidden relative">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover opacity-90 hover:scale-110 transition duration-500">
+                            <span class="absolute top-3 left-3 text-[10px] bg-gold text-white px-3 py-1 rounded-full uppercase font-bold shadow-md">${item.category}</span>
+                        </div>
+                        <h3 class="font-bold text-xl mt-3 text-[#2c1e1a]">${item.name}</h3>
+                        <p class="text-sm text-gray-500 mt-2 line-clamp-2">${item.desc}</p>
+                    </div>
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
+                        <span class="font-bold text-[#2c1e1a] text-2xl">${item.price.toLocaleString('vi-VN')}đ</span>
+                        <button onclick="addToCart('${item.name}', ${item.price})" class="bg-[#2c1e1a] text-white px-5 py-2.5 rounded-full font-bold hover:bg-gold transition shadow-md flex items-center gap-2">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        // ======= GIỎ HÀNG LOGIC =======
+        let cart = [];
+        const cartModal = document.getElementById('cart-modal');
+        const overlay = document.getElementById('overlay');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const cartCountElement = document.getElementById('cart-count');
+
+        function toggleCart() {
+            cartModal.classList.toggle('open');
+            overlay.classList.toggle('hidden');
+            if (cartModal.classList.contains('open')) document.body.style.overflow = 'hidden';
+            else document.body.style.overflow = 'auto';
+        }
+
+        function addToCart(name, price) {
+            const existingItem = cart.find(item => item.name === name);
+            if (existingItem) existingItem.quantity += 1;
+            else cart.push({ name, price, quantity: 1 });
+            updateCartUI();
+            
+            const cartBtn = document.querySelector('button[onclick="toggleCart()"]');
+            cartBtn.classList.add('scale-125');
+            setTimeout(() => cartBtn.classList.remove('scale-125'), 200);
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            cartItemsContainer.innerHTML = '';
+            let total = 0, count = 0;
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-center text-gray-500 mt-10">Giỏ hàng đang trống.</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal; count += item.quantity;
+
+                    cartItemsContainer.innerHTML += `
+                        <div class="flex justify-between items-center bg-white p-4 rounded-xl shadow-sm mb-3 border border-gray-100">
+                            <div>
+                                <h4 class="font-bold text-[#2c1e1a]">${item.name}</h4>
+                                <p class="text-sm text-gray-500 font-medium">${item.quantity} x ${item.price.toLocaleString('vi-VN')}đ</p>
+                            </div>
+                            <div class="flex items-center space-x-3 md:space-x-4">
+                                <span class="font-bold text-[#d4a373] text-sm md:text-base">${itemTotal.toLocaleString('vi-VN')}đ</span>
+                                <button onclick="removeFromCart(${index})" class="text-red-400 hover:text-red-600 p-2"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            cartTotalElement.innerText = total.toLocaleString('vi-VN') + 'đ';
+            cartCountElement.innerText = count;
+            cartCountElement.style.display = count === 0 ? 'none' : 'flex';
+        }
+
+        function checkout() {
+            if (cart.length === 0) { alert("Giỏ hàng của bạn đang trống!"); return; }
+            let orderText = "Chào Avoco, tôi muốn đặt hàng:\n\n";
+            cart.forEach(item => { orderText += `- ${item.name} x${item.quantity}\n`; });
+            orderText += `\nTổng cộng: ${cartTotalElement.innerText}\n`;
+            
+            alert("Đang chuyển hướng sang Zalo để gửi đơn hàng...");
+            window.open('https://zalo.me/0833847779?text=' + encodeURIComponent(orderText), '_blank');
+            
+            cart = []; updateCartUI(); toggleCart();
+        }
+
+        // TỰ ĐỘNG TẢI DỮ LIỆU KHI MỞ TRANG
+        window.onload = () => {
+            fetchDataFromGoogle();
+        };
+    </script>
+</body>
+</html>
